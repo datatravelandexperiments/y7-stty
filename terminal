@@ -1,0 +1,42 @@
+y7ck=(erase kill intr quit eof susp lnext reprint werase status discard)
+y7bk=(altwerase kerninfo)
+
+for y7i in ${y7ck[*]} ${y7bk[*]}
+do
+    eval y7stty_k_$y7i=$y7i
+    eval y7stty_v_$y7i=
+done
+
+if y7sc=$(y7findmsv 'stty' "$1/share")
+then
+    while read y7k y7v
+    do
+        eval y7stty_k_$y7k=$y7v
+    done <$y7sc
+fi
+
+if y7uc=$(y7findconfig "${1##*/}")
+then
+    while read y7k y7v
+    do
+        eval y7stty_v_$y7k=$y7v
+    done <$y7uc
+fi
+
+for y7i in ${y7ck[*]}
+do
+    y7k=$(eval echo "\$y7stty_k_$y7i")
+    y7v=$(eval echo "\$y7stty_v_$y7i")
+    test -n "$y7k" -a -n "$y7v" && y7stty+=("$y7k" "$y7v")
+done
+for y7i in ${y7bk[*]}
+do
+    y7k=$(eval echo "\$y7stty_k_$y7i")
+    y7v=$(eval echo "\$y7stty_v_$y7i")
+    test -n "$y7k" -a -n "$y7v" && y7stty+=("$y7k")
+done
+
+if ((${#y7stty[*]}))
+then
+    stty "${y7stty[@]}"
+fi
