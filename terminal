@@ -17,9 +17,9 @@ fi
 
 if y7uc=$(y7findconfig "${1##*/}")
 then
-    while read y7k y7v
+    while read -r y7k y7v
     do
-        eval y7stty_v_$y7k=$y7v
+        eval $(printf 'y7stty_v_%s=%q' "$y7k" "$y7v")
     done <$y7uc
 fi
 
